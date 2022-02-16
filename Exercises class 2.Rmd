@@ -1,0 +1,223 @@
+---
+title: "Methods class 2"
+author: "Victoria Lowe"
+date: "9/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse,ggplot2,dplyr,)
+setwd(".")
+```
+
+
+The supposidly easy/medium ones:
+```{r 3.1}
+#Weighted averages: A survey is conducted in a certain city regarding support for increased property taxes to fund schools. In this survey, higher taxes are supported by 50% of respondents aged 18–29, 60% of respondents aged 30–44, 40% of respondents aged 45–64, and 30% of respondents aged 65 and up. Assume there is no non response.
+
+#Suppose the sample includes 200 respondents aged 18–29, 250 aged 30–44, 300 aged 45–64, and 250 aged 65+. Use the weighted average formula to compute the proportion of respondents in the sample who support higher taxes.
+
+(200*0.50+250*0.60+300*0.40+250*0.30)/(200+250+300+250)
+
+#So 44.5% of all those who participated in the survey supported higher taxes
+```
+
+```{r 3.3}
+# Probability distributions: Using R, graph probability densities for the normal distribution, plotting several different curves corresponding to different choices of mean and standard deviation parameters.
+
+#Plotting 4 different distributions
+dist_1<-rnorm(1000, mean = 0, sd = 1)
+dist_2<-rnorm(1000, mean = 4, sd = 6)
+dist_3<-rnorm(1000, mean = 67, sd = 10)
+dist_4<-rnorm(1000, mean = 100, sd = 32)
+
+#Making histograms for all of them
+hist(dist_1)
+hist(dist_2)
+hist(dist_3)
+hist(dist_4)
+```
+
+```{r 3.4}
+#Probability distributions: Using a bar plot in R, graph the Poisson distribution with parameter 3.5.
+
+#Lambda represents the expected value, so the value that occurs the most times
+poisson_1<-rpois(1000,lambda = 3.5)
+
+hist(poisson_1)
+```
+
+```{r 3.5}
+# Probability distributions: Using a bar plot in R, graph the binomial distribution with size = 20 and p = 0.3.
+
+#Getting the amount of successes pr. trial
+binomial_1<-rbinom(n = 10, size = 20, prob =  0.3)
+hist(binomial_1)
+
+#Getting the probabilities of hitting 1,2,3,4,5,6,7,8,9 and 10
+dbinom(0:10, size = 20, prob = 0.3)
+
+#Getting the probability of getting x or less:
+pbinom(4, size = 20, prob = 0.3)
+
+#Mapping the probability:
+x<-0:20
+y<-dbinom(x,size = 20,prob = 0.3)
+plot(x,y,type="l")
+```
+
+```{r 3.6}
+#Linear transformations: A test is graded from 0 to 50, with an average score of 35 and a standard deviation of 10. For comparison to other tests, it would be convenient to rescale to a mean of 100 and standard deviation of 15.
+
+#(a) Labeling the original test scores as x and the desired rescaled test score as y, come up with a linear transformation, that is, values of a and b so that the rescaled scores y = a + bx have a mean of 100 and a standard deviation of 15.
+
+x<-rnorm(100,mean = 35, sd = 10)
+hist(x)
+
+y<-2.85*x
+hist(y)
+
+#How does this work when the difference between 100 and 35 is bigger than the difference between 15 and ten and you are supposed to multiply both numbers with the same number?
+
+#(b) What is the range of possible values of this rescaled score y?
+
+
+#(c) Plot the line showing y vs. x.
+```
+
+```{r 4.1}
+#Comparison of proportions: A randomized experiment is performed within a survey. 1000 people are contacted. Half the people contacted are promised a $5 incentive to participate, and half are not promised an incentive. The result is a 50% response rate among the treated group and 40% response rate among the control group. Give an estimate of standard error of the average treatment effect.
+
+# TREATMENT GROUP
+# calculating the expected value
+Expected_value_treatment<-0.5*500
+Expected_value_treatment
+
+# calculae the standard error for treatment group:
+SE_treatment<-sqrt((0.5*0.5)/500)
+SE_treatment #SE is 0.022
+
+# CONTROL GROUP
+# Calculate the expected value for control group
+Expected_value_control <- 0.4*500
+Expected_value_control # The expected value for treatment effect of control group is 200. 
+
+# Calculate the standard error for control group
+SE_control <- sqrt((0.40*0.60)/500)
+SE_control # The standard error for control group is 0.22. 
+
+# Calculate the estimated gap between treatment and control group
+SE_diff <- sqrt((SE_treatment^2)+(SE_control^2))
+SE_diff # The estimated gap is 0.31.
+```
+
+```{r 4.2}
+# Choosing sample size: You are designing a survey to estimate the gender gap: the difference in support for a candidate among men and women. Assuming the respondents are a simple random sample of the voting population, how many people do you need to poll so that the standard error is less than 5 percentage points?
+
+SE = s / (sqrt(N))
+
+0.05 = s /(sqrt(30))
+0.05 = s / 5.477226
+
+#Then I want to isolate the sd in the formula
+0.05*5.477226 = s
+0.05*5.477226 = 0.2738613
+#Here we end up isolating s instead of N, but how are we supposed to guess s???
+
+
+#something with the quantile distribution and qt(norm?)
+
+?qt
+```
+
+```{r 4.3}
+#Comparison of proportions: You want to gather data to determine which of two students is a better basketball shooter. One of them shoots with 30% accuracy and the other is a 40% shooter. Each student takes 20 shots and you then compare their shooting percentages. What is the probability that the better shooter makes more shots in this small experiment?
+
+#Getting the amount of successes pr. trial
+rbinom(n = 20, size = 1, prob = 0.3)
+rbinom(n = 20, size = 1, prob = 0.4)
+
+#Mapping the probability:
+x<-0:20
+y_1<-dbinom(x,size = 20, prob = 0.3)
+y_2<-dbinom(x,size = 20, prob = 0.4)
+plot(x,y_1,type="l")
+plot(x,y_2,type="l")
+
+
+#confidence interval, the probability of the difference being zero, the result should be 75% using qnorm in R
+```
+
+```{r 4.4}
+# Designing an experiment: You want to gather data to determine which of two students is a better basketball shooter. You plan to have each student take N shots and then compare their shooting percentages. Roughly how large does N have to be for you to have a good chance of distinguishing a 30% shooter from a 40% shooter?
+
+
+
+#maybe probability distributions
+```
+
+```{r 4.5}
+# Sampling distribution: Download a data file on a topic of interest to you. Read the file into R and order the data by one of the variables.
+
+penguin_df<-read_csv("penguins_lter.csv")
+
+#(a) Use the sample function in R to draw a simple random sample of size 20 from this population. What is the average value of the variable of interest in your sample?
+sample_1<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean(sample_1)
+
+#(b) Repeat this exercise several times to get a sense of the sampling distribution of the sample mean for this example
+sample_2<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean2 <- mean(sample_2, na.rm = T)
+
+sample_3<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean3 <- mean(sample_3, na.rm = T)
+
+sample_4<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean4 <- mean(sample_4, na.rm = T)
+
+sample_5<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean5 <- mean(sample_5, na.rm = T)
+
+sample_6<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean6 <- mean(sample_6, na.rm = T)
+
+sample_7<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean7 <- mean(sample_7, na.rm = T)
+
+sample_8<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean8 <- mean(sample_8, na.rm = T)
+
+sample_9<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean9 <- mean(sample_9, na.rm = T)
+
+sample_10<-sample(penguin_df$`Flipper Length (mm)`, 20)
+mean10 <- mean(sample_10, na.rm = T)
+
+vector0 <- c(mean2, mean3)
+vector1 <- c(mean2, mean3, mean4)
+vector2 <- c(mean2, mean3, mean4, mean5)
+vector3 <- c(mean2, mean3, mean4, mean5, mean6)
+vector4 <- c(mean2, mean3, mean4, mean5, mean6, mean7)
+vector5 <- c(mean2, mean3, mean4, mean5, mean6, mean7, mean8) 
+vector6 <- c(mean2, mean3, mean4, mean5, mean6, mean7, mean8, mean9)
+vector7 <- c(mean2, mean3, mean4, mean5, mean6, mean7, mean8, mean9, mean10)
+hist(vector0)
+hist(vector1)
+hist(vector2)
+hist(vector3)
+hist(vector4)
+hist(vector5)
+hist(vector6)
+hist(vector7)
+```
+
+The harder ones:
+```{r 3.10}
+# Working through your own example: Continuing the example from Exercises 1.10 and 2.10, consider a deterministic model on the linear or logarithmic scale that would arise in this topic. Graph the model and discuss its relevance to your problem.
+```
+
+```{r 4.11}
+#Working through your own example: Continuing the example from the final exercises of the earlier chapters, perform some basic comparisons, confidence intervals, and hypothesis tests and discuss the relevance of these to your substantive questions of interest.
+```
+
